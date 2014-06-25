@@ -1,0 +1,5 @@
+author: KingFisher
+load: STARTUP
+main: com.kingfisher.servermonitor.ServerMonitor
+name: ServerMonitor
+version: 0.0.1

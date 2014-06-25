@@ -1,0 +1,70 @@
+### Monitor configuration ###
+
+
+## General settings ##
+
+# How many seconds the plugin will collect the data before store it in the database.
+precision: 60
+
+# If the plugin must debug.
+debug: false
+
+
+## Monitoring settings ##
+
+block-place: true
+
+block-break: true
+
+redstone: true
+
+pistons: true
+
+entity-count: true
+
+player-count: true
+
+creature-spawn: true
+
+entity-death: true
+
+player-death: true
+
+item-spawn: true
+
+item-despawn: true
+
+item-drop: true
+
+item-pickup: true
+
+memory: true
+
+tps: true
+
+
+## Data viewer settings ##
+
+# The port to access to the data viewer, the address to the access to the data viewer will be http://<server-ip>:<port>
+access-port: 8018
+
+# The password to access to the data viewer.
+access-password: password
+
+
+## SQL settings ##
+
+# The type of SQL database. The actually supported types are : mysql.
+sql-type: mysql
+
+# The ip of the database.
+sql-ip: localhost
+
+# The port of the database.
+sql-port: 3306
+
+# The user to access to the database.
+sql-user: user
+
+# The password to access to the database.
+sql-password: password
