@@ -32,6 +32,7 @@ import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerPickupItemEvent;
 import org.bukkit.plugin.EventExecutor;
+import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 
 /**
@@ -66,7 +67,7 @@ public final class ServerMonitor extends JavaPlugin implements Listener {
 		try {
 			_configuration = new ServerMonitorConfiguration(getConfig());
 		} catch (ServerMonitorConfigurationException ex) {
-			throw new RuntimeException("An error occurred while reading the Monitor congiguration, this is probably due to your configuration. If you think that the error is due to the plugin itself, please contact the developer. The error message is: " + ex.getMessage(), ex);
+			runtimeException("An error occurred while parsing the congiguration.", ex);
 		}
 		debug("Configuration parsed.");
 		try {
@@ -76,13 +77,13 @@ public final class ServerMonitor extends JavaPlugin implements Listener {
 			_sql.executeNow("CREATE DATABASE IF NOT EXISTS server_monitor");
 			_sql.executeNow("USE server_monitor");
 		} catch (SQLException ex) {
-			throw new RuntimeException("An unexpected error occured while establishing the connection with the SQL database, this can be due to your configuration, the database, or the plugin itself. Please contact the developer if you think that the error is due to the plugin.", ex);
+			runtimeException("An unexpected error occured while establishing the connection with the SQL database, this can be due to your configuration, the database, or the plugin itself.", ex);
 		}
 		debug("Opening the access data server...");
 		try {
 			_access = new DataViewerServer(_configuration.getAccessPort(), _configuration.getAccessPassword(), _sql);
 		} catch (IOException ex) {
-			throw new RuntimeException("An unexpected error occured while opening the access data server, this can be due to your configuration, your connection, or the plugin itself. Please contact the developer if you think that the error is due to the plugin.", ex);
+			runtimeException("An unexpected error occured while opening the access data viewer, this can be due to your configuration, your connection, or the plugin itself.", ex);
 		}
 		debug("Opened.");
 		debug("Starting monitoring...");
@@ -119,7 +120,7 @@ public final class ServerMonitor extends JavaPlugin implements Listener {
 				Bukkit.getScheduler().scheduleSyncRepeatingTask(this, _tpsRunnable, 0, 0);
 			}
 		} catch (SQLException ex) {
-			throw new RuntimeException("", ex);
+			runtimeException("An unexpected error related to the database occured while starting monitoring, this can be due to the database or the plugin itself.", ex);
 		}
 		//
 		if (_configuration.getMonitorBlockPlace()) {
@@ -168,24 +169,78 @@ public final class ServerMonitor extends JavaPlugin implements Listener {
 	public void onDisable() {
 		debug("Stopping monitoring...");
 		Bukkit.getScheduler().cancelTasks(this);
+		_entityCountRunnable = null;
+		_playerCountRunnable = null;
+		_memoryRunnable = null;
+		_tpsRunnable = null;
+		if (_blockPlaceExecutor != null) {
+			BlockPlaceEvent.getHandlerList().unregister((Plugin) this);
+			_blockPlaceExecutor = null;
+		}
+		if (_blockBreakExecutor != null) {
+			BlockBreakEvent.getHandlerList().unregister((Plugin) this);
+			_blockBreakExecutor = null;
+		}
+		if (_redstoneExecutor != null) {
+			BlockRedstoneEvent.getHandlerList().unregister((Plugin) this);
+			_redstoneExecutor = null;
+		}
+		if (_pistonsExecutor != null) {
+			BlockPistonExtendEvent.getHandlerList().unregister((Plugin) this);
+			BlockPistonRetractEvent.getHandlerList().unregister((Plugin) this);
+			_pistonsExecutor = null;
+		}
+		if (_creatureSpawnExecutor != null) {
+			CreatureSpawnEvent.getHandlerList().unregister((Plugin) this);
+			_creatureSpawnExecutor = null;
+		}
+		if ((_entityDeathExecutor != null) || (_playerDeathExecutor != null)) {
+			EntityDeathEvent.getHandlerList().unregister((Plugin) this);
+			_entityDeathExecutor = null;
+			_playerDeathExecutor = null;
+		}
+		if (_itemSpawnExecutor != null) {
+			ItemSpawnEvent.getHandlerList().unregister((Plugin) this);
+			_itemSpawnExecutor = null;
+		}
+		if (_itemDespawnExecutor != null) {
+			ItemDespawnEvent.getHandlerList().unregister((Plugin) this);
+			_itemDespawnExecutor = null;
+		}
+		if (_itemDropExecutor != null) {
+			PlayerDropItemEvent.getHandlerList().unregister((Plugin) this);
+			_itemDropExecutor = null;
+		}
+		if (_itemPickupExecutor != null) {
+			PlayerPickupItemEvent.getHandlerList().unregister((Plugin) this);
+			_itemPickupExecutor = null;
+		}
 		debug("Stopped.");
-		debug("Closing the access data server...");
-		try {
-			_access.close();
-		} catch (IOException ex) {
-			throw new RuntimeException("An unexpected error occured while closing the access data server, this can be due to your connection or the plugin itself. Please contact the developer if you think that the error is due to the plugin.", ex);
+		debug("Closing the data viewer...");
+		if (_access != null) {
+			try {
+				_access.close();
+			} catch (IOException ex) {
+				runtimeException("An unexpected error occured while closing the data viewer, this can be due to your connection or the plugin itself.", ex);
+			}
 		}
 		debug("Closed.");
 		debug("Closing the SQL connection...");
-		try {
-			_sql.close();
-		} catch (IOException ex) {
-			throw new RuntimeException("An unexpected error occured while closing the connection to the SQL database, this can be due to the database or the plugin itself. Please contact the developer if you think that the error is due to the plugin.", ex);
+		if (_sql != null) {
+			try {
+				_sql.close();
+			} catch (IOException ex) {
+				runtimeException("An unexpected error occured while closing the connection to the SQL database, this can be due to the database or the plugin itself.", ex);
+			}
 		}
 		debug("Closed.");
 	}
 
-	public void debug(String message) {
+	protected static void runtimeException(String message, Throwable cause) {
+		throw new RuntimeException(message + " Please contact the developer if you think that the error is due to the plugin.\nHere is the error message: " + cause.getMessage() + "\nHere is the stacktrace:", cause);
+	}
+
+	protected void debug(String message) {
 		if (_configuration.getDebug()) {
 			getLogger().info(message);
 		}
@@ -233,7 +288,7 @@ public final class ServerMonitor extends JavaPlugin implements Listener {
 						_tpsRunnable.ini();
 					}
 				} catch (SQLException ex) {
-					throw new RuntimeException("", ex);
+					runtimeException("An unexpected error related to the database occured while storing the data, this can be due to the database or the plugin itself.", ex);
 				}
 				_last = time;
 				debug("Stored.");

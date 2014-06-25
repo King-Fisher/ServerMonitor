@@ -119,7 +119,7 @@ public final class SQLBridge implements Closeable {
 					try {
 						_connection.createStatement().execute(_toDo.remove());
 					} catch (SQLException ex) {
-						throw new RuntimeException("An unexpected error occured while executing a SQL statement, this can be due to the database, or the plugin itself. Please contact the developer if you think that the error is due to the plugin. The error message is: " + ex.getMessage(), ex);
+						ServerMonitor.runtimeException("An unexpected error occured while executing a SQL statement, this can be due to the database, or the plugin itself.", ex);
 					}
 				}
 			}

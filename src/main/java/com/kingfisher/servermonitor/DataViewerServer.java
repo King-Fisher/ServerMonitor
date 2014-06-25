@@ -44,7 +44,7 @@ public final class DataViewerServer implements Closeable {
 					new DataViewerSessionThread(_socket.accept()).start();
 				} catch (IOException ex) {
 					if (!isInterrupted()) {
-						throw new RuntimeException("", ex);
+						ServerMonitor.runtimeException("An unexpected error related to the data viewer occured.", ex);
 					}
 				}
 			}
@@ -80,50 +80,30 @@ public final class DataViewerServer implements Closeable {
 								builder.append(", ['").append(result.getString("date")).append("', ").append(result.getFloat("mean")).append(", ").append(result.getInt("min")).append(", ").append(result.getInt("max")).append(']');
 							}
 							file = file.replace("//%%ENTITY_COUNT%%", builder.toString());
-						} catch (SQLException ex) {
-							throw new RuntimeException("", ex);
-						}
-						try {
 							result = _sql.executeQuery("SELECT * FROM player_count");
 							builder = new StringBuilder();
 							while (result.next()) {
 								builder.append(", ['").append(result.getString("date")).append("', ").append(result.getFloat("mean")).append(", ").append(result.getInt("min")).append(", ").append(result.getInt("max")).append(']');
 							}
 							file = file.replace("//%%PLAYER_COUNT%%", builder.toString());
-						} catch (SQLException ex) {
-							throw new RuntimeException("", ex);
-						}
-						try {
 							result = _sql.executeQuery("SELECT * FROM redstone");
 							builder = new StringBuilder();
 							while (result.next()) {
 								builder.append(", ['").append(result.getString("date")).append("', ").append(result.getInt("total")).append(']');
 							}
 							file = file.replace("//%%REDSTONE%%", builder.toString());
-						} catch (SQLException ex) {
-							throw new RuntimeException("", ex);
-						}
-						try {
 							result = _sql.executeQuery("SELECT * FROM pistons");
 							builder = new StringBuilder();
 							while (result.next()) {
 								builder.append(", ['").append(result.getString("date")).append("', ").append(result.getInt("total")).append(']');
 							}
 							file = file.replace("//%%PISTONS%%", builder.toString());
-						} catch (SQLException ex) {
-							throw new RuntimeException("", ex);
-						}
-						try {
 							result = _sql.executeQuery("SELECT * FROM memory");
 							builder = new StringBuilder();
 							while (result.next()) {
 								builder.append(", ['").append(result.getString("date")).append("', ").append(result.getDouble("mean") / MB).append(", ").append(result.getLong("min") / MB).append(", ").append(result.getLong("max") / MB).append(']');
 							}
 							file = file.replace("//%%MEMORY%%", builder.toString());
-						} catch (SQLException ex) {
-							throw new RuntimeException("", ex);
-						}
-						try {
 							result = _sql.executeQuery("SELECT * FROM tps");
 							builder = new StringBuilder();
 							while (result.next()) {
@@ -131,7 +111,7 @@ public final class DataViewerServer implements Closeable {
 							}
 							file = file.replace("//%%TPS%%", builder.toString());
 						} catch (SQLException ex) {
-							throw new RuntimeException("", ex);
+							ServerMonitor.runtimeException("An unexpected error related to the database, this can be due to the database, or the plugin itself.", ex);
 						}
 						sendString(file);
 					} else if (request.startsWith("GET /password.php?password=")) {
@@ -141,10 +121,12 @@ public final class DataViewerServer implements Closeable {
 					}
 				}
 			} catch (IOException ex) {
+				ServerMonitor.runtimeException("An unexpected error related to the data viewer occured.", ex);
 			} finally {
 				try {
 					_socket.close();
 				} catch (IOException ex) {
+					ServerMonitor.runtimeException("An unexpected error related to the data viewer occured.", ex);
 				}
 			}
 		}
