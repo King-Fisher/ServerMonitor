@@ -32,6 +32,7 @@ public final class ServerMonitorConfiguration {
 	private final int _accessPort;
 	private final String _accessPassword;
 
+	private final String _sqlDatabase;
 	private final String _sqlType;
 	private final String _sqlIP;
 	private final int _sqlPort;
@@ -64,6 +65,7 @@ public final class ServerMonitorConfiguration {
 		_accessPort = config.getInt("access-port");
 		_accessPassword = config.getString("access-password");
 
+		_sqlDatabase = config.getString("sql-database");
 		_sqlType = config.getString("sql-type");
 		_sqlIP = config.getString("sql-ip");
 		_sqlPort = config.getInt("sql-port");
@@ -161,6 +163,10 @@ public final class ServerMonitorConfiguration {
 
 	public String getAccessPassword() {
 		return _accessPassword;
+	}
+
+	public String getSQLDatabase() {
+		return _sqlDatabase;
 	}
 
 	public String getSQLType() {

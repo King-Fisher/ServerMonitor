@@ -78,8 +78,8 @@ public final class ServerMonitor extends JavaPlugin implements Listener {
 			debug("Connecting to the SQL database...");
 			_sql = new SQLBridge(_configuration.getSQLType(), _configuration.getSQLIP(), _configuration.getSQLPort(), _configuration.getSQLUser(), _configuration.getSQLPassword());
 			debug("Connected.");
-			_sql.executeNow("CREATE DATABASE IF NOT EXISTS server_monitor");
-			_sql.executeNow("USE server_monitor");
+			_sql.executeNow("CREATE DATABASE IF NOT EXISTS " + _configuration.getSQLDatabase());
+			_sql.executeNow("USE " + _configuration.getSQLDatabase());
 		} catch (SQLException ex) {
 			runtimeException("An unexpected error occured while establishing the connection with the SQL database, this can be due to your configuration, the database, or the plugin itself.", ex);
 		}
@@ -93,34 +93,34 @@ public final class ServerMonitor extends JavaPlugin implements Listener {
 		debug("Starting monitoring...");
 		try {
 			if (_configuration.getMonitorRedstone()) {
-				_sql.executeNow("CREATE TABLE IF NOT EXISTS redstone (date DATETIME, total INT);");
+				_sql.executeNow("CREATE TABLE IF NOT EXISTS server_monitor_redstone (date DATETIME, total INT);");
 				_redstoneExecutor = new RedstoneExecutor();
 				Bukkit.getPluginManager().registerEvent(BlockRedstoneEvent.class, this, EventPriority.MONITOR, _redstoneExecutor, this, true);
 			}
 			if (_configuration.getMonitorPistons()) {
 				_pistonsExecutor = new PistonsExecutor();
-				_sql.executeNow("CREATE TABLE IF NOT EXISTS pistons (date DATETIME, total INT);");
+				_sql.executeNow("CREATE TABLE IF NOT EXISTS server_monitor_pistons (date DATETIME, total INT);");
 				Bukkit.getPluginManager().registerEvent(BlockPistonExtendEvent.class, this, EventPriority.MONITOR, _pistonsExecutor, this, true);
 				Bukkit.getPluginManager().registerEvent(BlockPistonRetractEvent.class, this, EventPriority.MONITOR, _pistonsExecutor, this, true);
 			}
 			if (_configuration.getMonitorEntityCount()) {
 				_entityCountRunnable = new EntityCountMonitorRunnable();
-				_sql.executeNow("CREATE TABLE IF NOT EXISTS entity_count (date DATETIME, mean FLOAT, min MEDIUMINT, max MEDIUMINT);");
+				_sql.executeNow("CREATE TABLE IF NOT EXISTS server_monitor_entity_count (date DATETIME, mean FLOAT, min MEDIUMINT, max MEDIUMINT);");
 				Bukkit.getScheduler().scheduleSyncRepeatingTask(this, _entityCountRunnable, 0, 0);
 			}
 			if (_configuration.getMonitorPlayerCount()) {
 				_playerCountRunnable = new PlayerCountMonitorRunnable();
-				_sql.executeNow("CREATE TABLE IF NOT EXISTS player_count (date DATETIME, mean FLOAT, min MEDIUMINT, max MEDIUMINT);");
+				_sql.executeNow("CREATE TABLE IF NOT EXISTS server_monitor_player_count (date DATETIME, mean FLOAT, min MEDIUMINT, max MEDIUMINT);");
 				Bukkit.getScheduler().scheduleSyncRepeatingTask(this, _playerCountRunnable, 0, 0);
 			}
 			if (_configuration.getMonitorMemory()) {
 				_memoryRunnable = new MemoryMonitorRunnable();
-				_sql.executeNow("CREATE TABLE IF NOT EXISTS memory (date DATETIME, mean DOUBLE, min BIGINT, max BIGINT);");
+				_sql.executeNow("CREATE TABLE IF NOT EXISTS server_monitor_memory (date DATETIME, mean DOUBLE, min BIGINT, max BIGINT);");
 				Bukkit.getScheduler().scheduleSyncRepeatingTask(this, _memoryRunnable, 0, 0);
 			}
 			if (_configuration.getMonitorTPS()) {
 				_tpsRunnable = new TPSMonitorRunnable();
-				_sql.executeNow("CREATE TABLE IF NOT EXISTS tps (date DATETIME, mean FLOAT, min FLOAT, max FLOAT);");
+				_sql.executeNow("CREATE TABLE IF NOT EXISTS server_monitor_tps (date DATETIME, mean FLOAT, min FLOAT, max FLOAT);");
 				Bukkit.getScheduler().scheduleSyncRepeatingTask(this, _tpsRunnable, 0, 0);
 			}
 		} catch (SQLException ex) {
@@ -289,27 +289,27 @@ public final class ServerMonitor extends JavaPlugin implements Listener {
 				String date = getDate(_last);
 				try {
 					if (_configuration.getMonitorRedstone()) {
-						_sql.executeAsync("INSERT INTO redstone (date, total) VALUES (" + date + ", " + _redstoneExecutor.getTotal() + ");");
+						_sql.executeAsync("INSERT INTO server_monitor_redstone (date, total) VALUES (" + date + ", " + _redstoneExecutor.getTotal() + ");");
 						_redstoneExecutor.ini();
 					}
 					if (_configuration.getMonitorPistons()) {
-						_sql.executeAsync("INSERT INTO pistons (date, total) VALUES (" + date + ", " + _pistonsExecutor.getTotal() + ");");
+						_sql.executeAsync("INSERT INTO server_monitor_pistons (date, total) VALUES (" + date + ", " + _pistonsExecutor.getTotal() + ");");
 						_pistonsExecutor.ini();
 					}
 					if (_configuration.getMonitorEntityCount()) {
-						_sql.executeAsync("INSERT INTO entity_count (date, mean, min, max) VALUES (" + date + ", " + _entityCountRunnable.getMean() + ", " + _entityCountRunnable.getMin() + ", " + _entityCountRunnable.getMax() + ");");
+						_sql.executeAsync("INSERT INTO server_monitor_entity_count (date, mean, min, max) VALUES (" + date + ", " + _entityCountRunnable.getMean() + ", " + _entityCountRunnable.getMin() + ", " + _entityCountRunnable.getMax() + ");");
 						_entityCountRunnable.ini();
 					}
 					if (_configuration.getMonitorPlayerCount()) {
-						_sql.executeAsync("INSERT INTO player_count (date, mean, min, max) VALUES (" + date + ", " + _playerCountRunnable.getMean() + ", " + _playerCountRunnable.getMin() + ", " + _playerCountRunnable.getMax() + ");");
+						_sql.executeAsync("INSERT INTO server_monitor_player_count (date, mean, min, max) VALUES (" + date + ", " + _playerCountRunnable.getMean() + ", " + _playerCountRunnable.getMin() + ", " + _playerCountRunnable.getMax() + ");");
 						_playerCountRunnable.ini();
 					}
 					if (_configuration.getMonitorMemory()) {
-						_sql.executeAsync("INSERT INTO memory (date, mean, min, max) VALUES (" + date + ", " + _memoryRunnable.getMean() + ", " + _memoryRunnable.getMin() + ", " + _memoryRunnable.getMax() + ");");
+						_sql.executeAsync("INSERT INTO server_monitor_memory (date, mean, min, max) VALUES (" + date + ", " + _memoryRunnable.getMean() + ", " + _memoryRunnable.getMin() + ", " + _memoryRunnable.getMax() + ");");
 						_memoryRunnable.ini();
 					}
 					if (_configuration.getMonitorTPS()) {
-						_sql.executeAsync("INSERT INTO tps (date, mean, min, max) VALUES (" + date + ", " + _tpsRunnable.getMean() + ", " + _tpsRunnable.getMin() + ", " + _tpsRunnable.getMax() + ");");
+						_sql.executeAsync("INSERT INTO server_monitor_tps (date, mean, min, max) VALUES (" + date + ", " + _tpsRunnable.getMean() + ", " + _tpsRunnable.getMin() + ", " + _tpsRunnable.getMax() + ");");
 						_tpsRunnable.ini();
 					}
 				} catch (SQLException ex) {
@@ -578,12 +578,14 @@ public final class ServerMonitor extends JavaPlugin implements Listener {
 
 		@Override
 		public void execute(Listener arg0, Event arg1) throws EventException {
-			CreatureSpawnEvent event = (CreatureSpawnEvent) arg1;
-			if (!event.isCancelled()) {
-				EntityType type = event.getEntityType();
-				if (_byTypes.containsKey(type)) {
-					_total++;
-					_byTypes.put(type, _byTypes.get(type) + 1);
+			if (arg1 instanceof CreatureSpawnEvent) {
+				CreatureSpawnEvent event = (CreatureSpawnEvent) arg1;
+				if (!event.isCancelled()) {
+					EntityType type = event.getEntityType();
+					if (_byTypes.containsKey(type)) {
+						_total++;
+						_byTypes.put(type, _byTypes.get(type) + 1);
+					}
 				}
 			}
 		}

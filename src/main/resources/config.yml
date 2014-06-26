@@ -68,3 +68,6 @@ sql-user: user
 
 # The password to access to the database.
 sql-password: password
+
+# The name of the database the plugin will use
+sql-database: server_monitor
