@@ -74,37 +74,37 @@ public final class DataViewerServer implements Closeable {
 						ResultSet result;
 						StringBuilder builder;
 						try {
-							result = _sql.executeQuery("SELECT * FROM entity_count");
+							result = _sql.executeQuery("SELECT * FROM server_monitor_entity_count");
 							builder = new StringBuilder();
 							while (result.next()) {
 								builder.append(", ['").append(result.getString("date")).append("', ").append(result.getFloat("mean")).append(", ").append(result.getInt("min")).append(", ").append(result.getInt("max")).append(']');
 							}
 							file = file.replace("//%%ENTITY_COUNT%%", builder.toString());
-							result = _sql.executeQuery("SELECT * FROM player_count");
+							result = _sql.executeQuery("SELECT * FROM server_monitor_player_count");
 							builder = new StringBuilder();
 							while (result.next()) {
 								builder.append(", ['").append(result.getString("date")).append("', ").append(result.getFloat("mean")).append(", ").append(result.getInt("min")).append(", ").append(result.getInt("max")).append(']');
 							}
 							file = file.replace("//%%PLAYER_COUNT%%", builder.toString());
-							result = _sql.executeQuery("SELECT * FROM redstone");
+							result = _sql.executeQuery("SELECT * FROM server_monitor_redstone");
 							builder = new StringBuilder();
 							while (result.next()) {
 								builder.append(", ['").append(result.getString("date")).append("', ").append(result.getInt("total")).append(']');
 							}
 							file = file.replace("//%%REDSTONE%%", builder.toString());
-							result = _sql.executeQuery("SELECT * FROM pistons");
+							result = _sql.executeQuery("SELECT * FROM server_monitor_pistons");
 							builder = new StringBuilder();
 							while (result.next()) {
 								builder.append(", ['").append(result.getString("date")).append("', ").append(result.getInt("total")).append(']');
 							}
 							file = file.replace("//%%PISTONS%%", builder.toString());
-							result = _sql.executeQuery("SELECT * FROM memory");
+							result = _sql.executeQuery("SELECT * FROM server_monitor_memory");
 							builder = new StringBuilder();
 							while (result.next()) {
 								builder.append(", ['").append(result.getString("date")).append("', ").append((float) (result.getDouble("mean") / MB)).append(", ").append(result.getLong("min") / MB).append(", ").append(result.getLong("max") / MB).append(']');
 							}
 							file = file.replace("//%%MEMORY%%", builder.toString());
-							result = _sql.executeQuery("SELECT * FROM tps");
+							result = _sql.executeQuery("SELECT * FROM server_monitor_tps");
 							builder = new StringBuilder();
 							while (result.next()) {
 								builder.append(", ['").append(result.getString("date")).append("', ").append(result.getFloat("mean")).append(", ").append(result.getFloat("min")).append(", ").append(result.getFloat("max")).append(']');
