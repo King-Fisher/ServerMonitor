@@ -852,7 +852,7 @@ public final class ServerMonitor extends JavaPlugin implements Listener {
 	private final class TPSMonitorRunnable implements Runnable {
 
 		private static final long TICK_DURATION = 50L;
-		private static final double TICKS_PER_SECOND = 1D / TICK_DURATION;
+		private static final double TICKS_PER_SECOND = (1D / TICK_DURATION) * 1000D;
 
 		private double _total;
 		private long _i;
