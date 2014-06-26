@@ -422,12 +422,14 @@ public final class ServerMonitor extends JavaPlugin implements Listener {
 
 		@Override
 		public void execute(Listener arg0, Event arg1) throws EventException {
-			ItemSpawnEvent event = (ItemSpawnEvent) arg1;
-			if (!event.isCancelled()) {
-				Material type = event.getEntity().getItemStack().getType();
-				if (_byTypes.containsKey(type)) {
-					_total++;
-					_byTypes.put(type, _byTypes.get(type) + 1);
+			if (arg1 instanceof ItemSpawnEvent) {
+				ItemSpawnEvent event = (ItemSpawnEvent) arg1;
+				if (!event.isCancelled()) {
+					Material type = event.getEntity().getItemStack().getType();
+					if (_byTypes.containsKey(type)) {
+						_total++;
+						_byTypes.put(type, _byTypes.get(type) + 1);
+					}
 				}
 			}
 		}
