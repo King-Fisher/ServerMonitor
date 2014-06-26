@@ -11,8 +11,11 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.World;
+import org.bukkit.command.Command;
+import org.bukkit.command.CommandSender;
 import org.bukkit.entity.EntityType;
 import org.bukkit.event.Event;
 import org.bukkit.event.EventException;
@@ -63,6 +66,7 @@ public final class ServerMonitor extends JavaPlugin implements Listener {
 
 	@Override
 	public void onEnable() {
+		System.out.print("Not finished yet! The functionalities are not all implemented yet and the performances will be improved.");
 		saveDefaultConfig();
 		try {
 			_configuration = new ServerMonitorConfiguration(getConfig());
@@ -234,6 +238,27 @@ public final class ServerMonitor extends JavaPlugin implements Listener {
 			}
 		}
 		debug("Closed.");
+	}
+
+	@Override
+	public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
+		switch (command.getName().toLowerCase()) {
+			case "purgemonitor":
+				purgeDB();
+				return true;
+			case "reloadmonitor":
+				onEnable();
+				onDisable();
+				sender.sendMessage(ChatColor.GREEN + "ServerMonitor reloaded." + ChatColor.RESET);
+				return true;
+			default:
+				return false;
+		}
+	}
+
+	public void purgeDB() {
+		System.out.print("Not implemented yet.");
+		//todo
 	}
 
 	protected static void runtimeException(String message, Throwable cause) {
@@ -824,6 +849,9 @@ public final class ServerMonitor extends JavaPlugin implements Listener {
 
 	private final class TPSMonitorRunnable implements Runnable {
 
+		private static final long TICK_DURATION = 50L;
+		private static final double TICKS_PER_SECOND = 1D / TICK_DURATION;
+
 		private double _total;
 		private long _i;
 		private double _min;
@@ -838,9 +866,9 @@ public final class ServerMonitor extends JavaPlugin implements Listener {
 		@Override
 		public void run() {
 			long t = System.currentTimeMillis();
-			long d = t - _lastTick;
-			if (d >= 50) {
-				double tps = (50D / d) * 20D;
+			long diff = t - _lastTick;
+			if (diff >= TICK_DURATION) {
+				double tps = (TICKS_PER_SECOND / diff) * TICK_DURATION;
 				_total += tps;
 				_i++;
 				if (tps < _min) {

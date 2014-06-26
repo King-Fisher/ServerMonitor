@@ -1,5 +1,28 @@
 author: KingFisher
+commands:
+    purgemonitor:
+        description: Allows to purge the database, be careful with this command, it deletes all the data collected by ServerMonitor.
+        permission: servermonitor.purgemonitor
+        usage: /purgemonitor
+    reloadmonitor:
+        description: Allows to reload ServerMonitor.
+        permission: servermonitor.reloadmonitor
+        usage: /reloadmonitor
+description: Allows to collect data about the server, and to view the data as charts.
 load: STARTUP
 main: com.kingfisher.servermonitor.ServerMonitor
 name: ServerMonitor
+permissions:
+    servermonitor.*:
+        children:
+            servermonitor.purgemonitor: true
+            servermonitor.reloadmonitor: true
+        default: false
+        description: Allows to run all ServerMonitor commands.
+    servermonitor.purgemonitor:
+        default: false
+        description: Allows to run the /purgemonitor command.
+    servermonitor.reloadmonitor:
+        default: false
+        description: Allows to run the /reloadmonitor reload command.
 version: 0.0.1

@@ -53,7 +53,7 @@ public final class DataViewerServer implements Closeable {
 
 	private final class DataViewerSessionThread extends Thread {
 
-		private static final double MB = 1024D * 1024D;
+		private static final float MB = 1024F * 1024F;
 
 		private final Socket _socket;
 
@@ -101,7 +101,7 @@ public final class DataViewerServer implements Closeable {
 							result = _sql.executeQuery("SELECT * FROM memory");
 							builder = new StringBuilder();
 							while (result.next()) {
-								builder.append(", ['").append(result.getString("date")).append("', ").append(result.getDouble("mean") / MB).append(", ").append(result.getLong("min") / MB).append(", ").append(result.getLong("max") / MB).append(']');
+								builder.append(", ['").append(result.getString("date")).append("', ").append((float) (result.getDouble("mean") / MB)).append(", ").append(result.getLong("min") / MB).append(", ").append(result.getLong("max") / MB).append(']');
 							}
 							file = file.replace("//%%MEMORY%%", builder.toString());
 							result = _sql.executeQuery("SELECT * FROM tps");
