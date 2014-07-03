@@ -6,39 +6,49 @@
 # How many seconds the plugin will collect the data before store it in the database.
 precision: 60
 
+# The data older than this number of hours will be deleted.
+maximum-data-seniority: 24
+
 # If the plugin must debug.
 debug: false
+
+# Use player unique ID.
+use-player-uuids: true
+
+# All data collected by ServerMonitor will be deleted on each plugin reloading, server startup and server reloading.
+purge-on-load: false
 
 
 ## Monitoring settings ##
 
-block-place: true
+blocks: true
 
-block-break: true
+chunks: true
+
+class-loading: true
+
+entities: true
+
+# Not supported yet.
+experience: true
+
+garbage-collector: true
+
+# Not supported yet.
+items: true
+
+# Not supported yet.
+living-entities: true
+
+memory: true
+
+operating-system: true
+
+players: true
 
 redstone: true
 
-pistons: true
-
-entity-count: true
-
-player-count: true
-
-creature-spawn: true
-
-entity-death: true
-
-player-death: true
-
-item-spawn: true
-
-item-despawn: true
-
-item-drop: true
-
-item-pickup: true
-
-memory: true
+threads: true
 
 tps: true
 

@@ -1,8 +1,6 @@
 package com.kingfisher.servermonitor;
 
-import org.bukkit.Material;
 import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.entity.EntityType;
 
 /**
  *
@@ -12,25 +10,27 @@ public final class ServerMonitorConfiguration {
 
 	private final int _precision;
 	private final boolean _debug;
+	private final boolean _useUUIDs;
+	private final int _maxSeniority;
+	private final boolean _purgeOnLoad;
 
-	private final boolean _blockPlace;
-	private final boolean _blockBreak;
-	private final boolean _redstone;
-	private final boolean _pistons;
-	private final boolean _entityCount;
-	private final boolean _playerCount;
-	private final boolean _creatureSpawn;
-	private final boolean _entityDeath;
-	private final boolean _playerDeath;
-	private final boolean _itemSpawn;
-	private final boolean _itemDespawn;
-	private final boolean _itemDrop;
-	private final boolean _itemPickup;
+	private final boolean _blocks;
+	private final boolean _chunks;
+	private final boolean _classLoading;
+	private final boolean _entities;
+	private final boolean _experience;
+	private final boolean _garbageCollector;
+	private final boolean _items;
+	private final boolean _livingEntities;
 	private final boolean _memory;
+	private final boolean _operatingSystem;
+	private final boolean _players;
+	private final boolean _redstone;
+	private final boolean _threads;
 	private final boolean _tps;
 
-	private final int _accessPort;
-	private final String _accessPassword;
+	private final int _viewerPort;
+	private final String _viewerPassword;
 
 	private final String _sqlDatabase;
 	private final String _sqlType;
@@ -45,25 +45,27 @@ public final class ServerMonitorConfiguration {
 			throw new ServerMonitorConfigurationException("precision must be higher than 0.");
 		}
 		_debug = config.getBoolean("debug");
+		_useUUIDs = config.getBoolean("use-player-uuids");
+		_maxSeniority = config.getInt("maximum-data-seniority");
+		_purgeOnLoad = config.getBoolean("purge-on-load");
 
-		_blockPlace = config.getBoolean("block-place");
-		_blockBreak = config.getBoolean("block-break");
-		_redstone = config.getBoolean("redstone");
-		_pistons = config.getBoolean("pistons");
-		_entityCount = config.getBoolean("entity-count");
-		_playerCount = config.getBoolean("entity-count");
-		_creatureSpawn = config.getBoolean("creature-spawn");
-		_entityDeath = config.getBoolean("entity-death");
-		_playerDeath = config.getBoolean("player-death");
-		_itemSpawn = config.getBoolean("item-spawn");
-		_itemDespawn = config.getBoolean("item-despawn");
-		_itemDrop = config.getBoolean("item-drop");
-		_itemPickup = config.getBoolean("item-pickup");
+		_blocks = config.getBoolean("blocks");
+		_chunks = config.getBoolean("chunks");
+		_classLoading = config.getBoolean("class-loading");
+		_entities = config.getBoolean("entities");
+		_experience = config.getBoolean("experience");
+		_garbageCollector = config.getBoolean("garbage-collector");
+		_items = config.getBoolean("items");
+		_livingEntities = config.getBoolean("living-entities");
 		_memory = config.getBoolean("memory");
+		_operatingSystem = config.getBoolean("operating-system");
+		_players = config.getBoolean("players");
+		_redstone = config.getBoolean("redstone");
+		_threads = config.getBoolean("threads");
 		_tps = config.getBoolean("tps");
 
-		_accessPort = config.getInt("access-port");
-		_accessPassword = config.getString("access-password");
+		_viewerPort = config.getInt("access-port");
+		_viewerPassword = config.getString("access-password");
 
 		_sqlDatabase = config.getString("sql-database");
 		_sqlType = config.getString("sql-type");
@@ -71,22 +73,6 @@ public final class ServerMonitorConfiguration {
 		_sqlPort = config.getInt("sql-port");
 		_sqlUser = config.getString("sql-user");
 		_sqlPassword = config.getString("sql-password");
-	}
-
-	private static Material getMaterial(String string) throws ServerMonitorConfigurationException {
-		try {
-			return Material.valueOf(string.toUpperCase());
-		} catch (IllegalArgumentException ex) {
-			throw new ServerMonitorConfigurationException("Invalid material: " + string + ".", ex);
-		}
-	}
-
-	private static EntityType getEntityType(String string) throws ServerMonitorConfigurationException {
-		try {
-			return EntityType.valueOf(string.toUpperCase());
-		} catch (IllegalArgumentException ex) {
-			throw new ServerMonitorConfigurationException("Invalid entity type: " + string + ".", ex);
-		}
 	}
 
 	public int getPrecision() {
@@ -97,72 +83,80 @@ public final class ServerMonitorConfiguration {
 		return _debug;
 	}
 
-	public boolean getMonitorBlockPlace() {
-		return _blockPlace;
+	public boolean getUsePlayerUUIDs() {
+		return _useUUIDs;
 	}
 
-	public boolean getMonitorBlockBreak() {
-		return _blockBreak;
+	public int getMaximumDataSeniority() {
+		return _maxSeniority;
 	}
 
-	public boolean getMonitorCreatureSpawn() {
-		return _creatureSpawn;
+	public boolean getPurgeOnLoad() {
+		return _purgeOnLoad;
 	}
 
-	public boolean getMonitorEntityDeath() {
-		return _entityDeath;
+	public boolean getMonitorBlocks() {
+		return _blocks;
 	}
 
-	public boolean getMonitorPlayerDeath() {
-		return _playerDeath;
+	public boolean getMonitorChunks() {
+		return _chunks;
 	}
 
-	public boolean getMonitorItemSpawn() {
-		return _itemSpawn;
+	public boolean getMonitorClassLoading() {
+		return _classLoading;
 	}
 
-	public boolean getMonitorItemDespawn() {
-		return _itemDespawn;
+	public boolean getMonitorEntities() {
+		return _entities;
 	}
 
-	public boolean getMonitorItemDrop() {
-		return _itemDrop;
+	public boolean getMonitorExperience() {
+		return _experience;
 	}
 
-	public boolean getMonitorItemPickup() {
-		return _itemPickup;
+	public boolean getMonitorGarbageCollector() {
+		return _garbageCollector;
 	}
 
-	public boolean getMonitorEntityCount() {
-		return _entityCount;
+	public boolean getMonitorItems() {
+		return _items;
 	}
 
-	public boolean getMonitorPlayerCount() {
-		return _playerCount;
-	}
-
-	public boolean getMonitorRedstone() {
-		return _redstone;
-	}
-
-	public boolean getMonitorPistons() {
-		return _pistons;
+	public boolean getMonitorLivingEntities() {
+		return _livingEntities;
 	}
 
 	public boolean getMonitorMemory() {
 		return _memory;
 	}
 
+	public boolean getMonitorOperatingSystem() {
+		return _operatingSystem;
+	}
+
+	public boolean getMonitorPlayers() {
+		return _players;
+	}
+
+	public boolean getMonitorRedstone() {
+		return _redstone;
+	}
+
+	public boolean getMonitorThreads() {
+		return _threads;
+	}
+
 	public boolean getMonitorTPS() {
 		return _tps;
 	}
 
-	public int getAccessPort() {
-		return _accessPort;
+	public int getDataViewerPort() {
+		return _viewerPort;
 	}
 
-	public String getAccessPassword() {
-		return _accessPassword;
+	public String getDataViewerPassword() {
+		return _viewerPassword;
 	}
 
 	public String getSQLDatabase() {

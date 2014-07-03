@@ -6,68 +6,13 @@
         <script type="text/javascript" src="https://www.google.com/jsapi"></script>
         <script type="text/javascript">
         google.load('visualization', '1.0', {'packages':['corechart']});
-        google.setOnLoadCallback(drawEntityCount);
-        function drawEntityCount() {
-            var data = new google.visualization.arrayToDataTable([
-                ['Date', 'mean', 'min', 'max']//%%ENTITY_COUNT%%
-            ]);
-            var options = {'title':'Entity count', 'height':400, 'colors':['green', 'blue', 'red'], 'explorer':{axis:'horizontal'}};
-            var chart = new google.visualization.LineChart(document.getElementById('entity_count'));
-            chart.draw(data, options);
-        }
-        google.setOnLoadCallback(drawPlayerCount);
-        function drawPlayerCount() {
-            var data = new google.visualization.arrayToDataTable([
-                ['Date', 'mean', 'min', 'max']//%%PLAYER_COUNT%%
-            ]);
-            var options = {'title':'Player count', 'height':400, 'colors':['green', 'blue', 'red'], 'explorer':{axis:'horizontal'}};
-            var chart = new google.visualization.LineChart(document.getElementById('player_count'));
-            chart.draw(data, options);
-        }
-        google.setOnLoadCallback(drawRedstone);
-        function drawRedstone() {
-            var data = new google.visualization.arrayToDataTable([
-                ['Date', 'Redstone use']//%%REDSTONE%%
-            ]);
-            var options = {'title':'Redstone monitoring', 'height':400, 'colors':['red'], 'explorer':{axis:'horizontal'}};
-            var chart = new google.visualization.LineChart(document.getElementById('redstone'));
-            chart.draw(data, options);
-        }
-        google.setOnLoadCallback(drawPistons);
-        function drawPistons() {
-            var data = new google.visualization.arrayToDataTable([
-                ['Date', 'Pistons use']//%%PISTONS%%
-            ]);
-            var options = {'title':'Pistons monitoring', 'height':400, 'colors':['green'], 'explorer':{axis:'horizontal'}};
-            var chart = new google.visualization.LineChart(document.getElementById('pistons'));
-            chart.draw(data, options);
-        }
-        google.setOnLoadCallback(drawMemory);
-        function drawMemory() {
-            var data = new google.visualization.arrayToDataTable([
-                ['Date', 'mean', 'min', 'max']//%%MEMORY%%
-            ]);
-            var options = {'title':'Used memory (MB)', 'height':400, 'colors':['green', 'blue', 'red'], 'explorer':{axis:'horizontal'}};
-            var chart = new google.visualization.LineChart(document.getElementById('memory'));
-            chart.draw(data, options);
-        }
-        google.setOnLoadCallback(drawTPS);
-        function drawTPS() {
-            var data = new google.visualization.arrayToDataTable([
-                ['Date', 'mean', 'min', 'max']//%%TPS%%
-            ]);
-            var options = {'title':'Ticks per second', 'height':400, 'colors':['green', 'blue', 'red'], 'explorer':{axis:'horizontal'}};
-            var chart = new google.visualization.LineChart(document.getElementById('tps'));
-            chart.draw(data, options);
+        google.setOnLoadCallback(drawCharts);
+        function drawCharts() {
+//%FUNCTION%
         }
         </script>
     </head>
     <body>
-        <p id="entity_count"></p>
-        <p id="player_count"></p>
-        <p id="redstone"></p>
-        <p id="pistons"></p>
-        <p id="memory"></p>
-        <p id="tps"></p>
+<!-- %BODY% -->
     </body>
 </html>

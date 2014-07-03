@@ -11,16 +11,18 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 
 /**
  *
- * @author Hector
+ * @author KingFisher
  */
 public final class SQLBridge implements Closeable {
 
+	private final ServerMonitor _serverMonitor;
 	private final Connection _connection;
 	private final SQLThread _thread = new SQLThread();
 	private final Queue<String> _toDo = new ConcurrentLinkedQueue<>();
 
-	public SQLBridge(String type, String ip, int port, String user, String password) throws SQLException {
-		_connection = DriverManager.getConnection("jdbc:" + type.toLowerCase() + "://" + ip + ":" + port, user, password);
+	public SQLBridge(ServerMonitor serverMonitor) throws SQLException {
+		_serverMonitor = serverMonitor;
+		_connection = DriverManager.getConnection("jdbc:" + _serverMonitor.getConfiguration().getSQLType().toLowerCase() + "://" + _serverMonitor.getConfiguration().getSQLIP() + ":" + _serverMonitor.getConfiguration().getSQLPort(), _serverMonitor.getConfiguration().getSQLUser(), _serverMonitor.getConfiguration().getSQLPassword());
 		_thread.start();
 	}
 
@@ -37,6 +39,14 @@ public final class SQLBridge implements Closeable {
 		} catch (SQLException ex) {
 			throw new IOException(ex);
 		}
+	}
+
+	public boolean isOpen() throws SQLException {
+		return _thread.isAlive() && !_connection.isClosed();
+	}
+
+	public boolean isClosed() throws SQLException {
+		return !_thread.isAlive() || _connection.isClosed();
 	}
 
 	/**
@@ -116,10 +126,11 @@ public final class SQLBridge implements Closeable {
 		public final void run() {
 			while (!isInterrupted()) {
 				while (!_toDo.isEmpty()) {
+					String statement = _toDo.remove();
 					try {
-						_connection.createStatement().execute(_toDo.remove());
+						_connection.createStatement().execute(statement);
 					} catch (SQLException ex) {
-						ServerMonitor.runtimeException("An unexpected error occured while executing a SQL statement, this can be due to the database, or the plugin itself.", ex);
+						_serverMonitor.runtimeException("An unexpected error occured while executing the following SQL statement: " + statement, ex);
 					}
 				}
 			}
