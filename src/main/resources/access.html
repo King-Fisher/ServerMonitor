@@ -10,6 +10,36 @@
         function drawCharts() {
 //%FUNCTION%
         }
+/*        function showHideSeries () {
+            var sel = chart.getSelection();
+            if (sel.length > 0) {
+                if (sel[0].row == null) {
+                    var col = sel[0].column;
+                    if (typeof(columns[col]) == 'number') {
+                        var src = columns[col];
+                        columns[col] = {
+                            label: data.getColumnLabel(src),
+                            type: data.getColumnType(src),
+                            sourceColumn: src,
+                            calc: function () {
+                                return null;
+                            }
+                        };
+                        series[src - 1].color = '#CCCCCC';
+                    } else {
+                        var src = columns[col].sourceColumn;
+
+                        // show the data series
+                        columns[col] = src;
+                        series[src - 1].color = null;
+                    }
+                    var view = new google.visualization.DataView(data);
+                    view.setColumns(columns);
+                    chart.draw(view, options);
+                }
+            }
+        }
+        google.visualization.events.addListener(chart, 'select', showHideSeries);*/
         </script>
     </head>
     <body>
