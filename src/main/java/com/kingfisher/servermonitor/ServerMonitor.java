@@ -42,16 +42,7 @@ public final class ServerMonitor extends JavaPlugin {
 			_sql = new SQLBridge(this);
 			debug("Connected.");
 		} catch (SQLException ex) {
-			runtimeException("An unexpected error occured while establishing the connection with the SQL database.", ex);
-			return;
-		}
-		try {
-			debug("Selecting the database " + _configuration.getSQLDatabase() + "...");
-			_sql.executeNow("CREATE DATABASE IF NOT EXISTS " + _configuration.getSQLDatabase());
-			_sql.executeNow("USE " + _configuration.getSQLDatabase());
-			debug("Database OK.");
-		} catch (SQLException ex) {
-			runtimeException("An unexpected error occured while selecting the database.", ex);
+			runtimeException("An unexpected error occured while connecting to the database.", ex);
 			return;
 		}
 		debug("Opening the access data server...");
