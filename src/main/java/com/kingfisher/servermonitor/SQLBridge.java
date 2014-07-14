@@ -38,7 +38,7 @@ public final class SQLBridge implements Closeable {
 	private void openConnection() throws SQLException {
 		if (_using.getAndIncrement() == 0) {
 			_connection.set(DriverManager.getConnection(_link, _serverMonitor.getConfiguration().getSQLUser(), _serverMonitor.getConfiguration().getSQLPassword()));
-			executeNow("USE " + _serverMonitor.getConfiguration().getSQLDatabase());
+			_connection.get().createStatement().execute("USE " + _serverMonitor.getConfiguration().getSQLDatabase());
 		}
 	}
 
